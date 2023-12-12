@@ -1,4 +1,3 @@
-
 //tabs
 const tabs = document.querySelectorAll(".tabheader__item"),
       tabsParent = document.querySelector(".tabheader__items"),
@@ -83,3 +82,35 @@ function getDateDifference(endTime) {
 }
 
 setClock(".timer",endTime);
+
+
+// Modal
+const openModal = document.querySelectorAll("[data-modal]");
+const closeModal = document.querySelector("[data-close]");
+const modal = document.querySelector(".modal");
+
+function hideModal() {
+    modal.style.display = "none";
+    document.body.style.overflow = "";
+}
+
+openModal.forEach(btn => {
+    btn.addEventListener("click", () => {
+        modal.style.display = "block";
+        document.body.style.overflow = "hidden";
+    });
+});
+
+closeModal.addEventListener("click", hideModal);
+
+modal.addEventListener("click", (e) => {
+    if (e.target = modal) {
+        hideModal();
+    }
+});
+
+document.addEventListener("keydown", (e) => {
+    if (e.code === "Escape") {
+        hideModal();
+    }
+});
