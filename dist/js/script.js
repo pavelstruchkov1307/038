@@ -134,37 +134,41 @@ window.addEventListener('scroll', showModalByScroll);
 // Class
 class Menu {
 
-    constructor(src, alt, title, desc, price, selector) {
+    constructor(src, alt, title, desc, price, selector, ...classes) {
         this.src = src;
         this.alt = alt;
         this.title = title;
         this.desc = desc;
         this.price = price;
         this.selector = selector;
+        this.classes = classes;
     }
 
     createMenu() {
 
         const div = document.createElement("div");
 
-        div.innerHTML = `<div class="menu__item">
-        <img src=${this.src} alt=${this.alt}>
-        <h3 class="menu__item-subtitle">${this.title}</h3>
-        <div class="menu__item-descr">${this.desc}</div>
-        <div class="menu__item-divider"></div>
-        <div class="menu__item-price">
-            <div class="menu__item-cost">Цена:</div>
-            <div class="menu__item-total"><span>${this.price}</span> грн/день</div>
-        </div>
-        </div>`;
+        if (this.classes.length) {
+            this.classes.forEach(className => div.classList.add(className)); 
+        } else {
+            div.classList.add("menu__item")
+        }
+
+        div.innerHTML = `
+            <img src=${this.src} alt=${this.alt}>
+            <h3 class="menu__item-subtitle">${this.title}</h3>
+            <div class="menu__item-descr">${this.desc}</div>
+            <div class="menu__item-divider"></div>
+            <div class="menu__item-price">
+                <div class="menu__item-cost">Цена:</div>
+                <div class="menu__item-total"><span>${this.price}</span> грн/день</div>
+            </div>`;
 
         const element = document.querySelector(this.selector);
-        console.log(element)
-        console.log(div)
         element.append(div);
 
     }
     
 }
 
-new Menu("img/tabs/vegy.jpg", "vegy", 'Меню "Фитнес"',  'Меню "Фитнес" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и      здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!', "229", ".menu .container").createMenu();
+new Menu("img/tabs/vegy.jpg", "vegy", 'Меню "Фитнес"',  'Меню "Фитнес" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и      здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!', "229", ".menu .container", "menu__item", "last").createMenu();
