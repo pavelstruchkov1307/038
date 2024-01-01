@@ -108,11 +108,11 @@ document.querySelectorAll("[data-modal]").forEach(btn => {
 
 closeModal.addEventListener("click", hideModal);
 
-modal.addEventListener("click", (e) => {
-    if (e.target = modal) {
-        hideModal();
-    }
-});
+// modal.addEventListener("click", (e) => {
+//     if (e.target = modal) {
+//         hideModal();
+//     }
+// });
 
 document.addEventListener("keydown", (e) => {
     if (e.code === "Escape") {
@@ -172,3 +172,59 @@ class Menu {
 }
 
 new Menu("img/tabs/vegy.jpg", "vegy", 'Меню "Фитнес"',  'Меню "Фитнес" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и      здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!', "229", ".menu .container", "menu__item", "last").createMenu();
+
+// forms
+const forms = document.querySelectorAll('form');
+
+const message = {
+    loading: 'Загрузка',
+    success: 'Спасибо! Скоро мы свами свяжемся',
+    error: "Что-то пошло не так"
+};
+
+forms.forEach((e) => {
+    postData(e);
+});
+
+function postData(form) {
+
+    form.addEventListener("submit", (e) => {
+        e.preventDefault();
+
+        const div = document.createElement("div");
+        div.classList.add("status");
+        div.textContent = message.loading;
+        form.append(div);
+
+        const formData = new FormData(form);
+
+        const obj = {};
+
+        formData.forEach((val, key) => {
+            obj[key] = val;
+        });
+
+        const json = JSON.stringify(obj);
+
+        let xhr = new XMLHttpRequest();
+        xhr.open("POST", "../server.php");
+        xhr.setRequestHeader("Content-Type", "application/json");
+        console.log(form)
+        console.log(formData)
+        xhr.send(json);
+
+        xhr.addEventListener("load", (e) => {
+            if (xhr.status === 200 ) {
+                console.log(xhr);
+                div.textContent = message.success;
+                form.reset();
+                setTimeout(() => div.remove(), 2000);
+            }else {
+                div.textContent = message.error
+            }
+        });
+
+    });
+
+
+}
