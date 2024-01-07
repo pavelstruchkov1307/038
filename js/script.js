@@ -38,7 +38,6 @@ hideTabContext();
 showTabContent();
 
 //timer
-
 const endTime = "2023-12-31";
 
 function setClock(selector, endTime) {
@@ -85,7 +84,6 @@ setClock(".timer",endTime);
 
 
 // Modal
-// const openModal = document.querySelectorAll("[data-modal]");
 const closeModal = document.querySelector("[data-close]");
 const modal = document.querySelector(".modal");
 
@@ -108,11 +106,11 @@ document.querySelectorAll("[data-modal]").forEach(btn => {
 
 closeModal.addEventListener("click", hideModal);
 
-// modal.addEventListener("click", (e) => {
-//     if (e.target = modal) {
-//         hideModal();
-//     }
-// });
+modal.addEventListener("click", (e) => {
+    if (e.target === modal) {
+        hideModal();
+    }
+});
 
 document.addEventListener("keydown", (e) => {
     if (e.code === "Escape") {
@@ -209,22 +207,49 @@ function postData(form) {
         let xhr = new XMLHttpRequest();
         xhr.open("POST", "../server.php");
         xhr.setRequestHeader("Content-Type", "application/json");
-        console.log(form)
-        console.log(formData)
         xhr.send(json);
 
         xhr.addEventListener("load", (e) => {
             if (xhr.status === 200 ) {
-                console.log(xhr);
-                div.textContent = message.success;
+                showThanksModal(message.success);
+                div.remove();
                 form.reset();
-                setTimeout(() => div.remove(), 2000);
             }else {
-                div.textContent = message.error
+                showThanksModal(message.error);
+                div.remove();
+                form.reset();
             }
         });
 
+        function showThanksModal(message) {
+            const prevModal = document.querySelector(".modal__dialog");
+            prevModal.style.display = "none";
+
+            const div = document.createElement("div");
+            div.classList.add("modal__dialog");
+            openModal();
+
+            div.innerHTML = `
+                <div class="modal__content">
+                    <div class="modal__close" data-close>×</div>
+                    <div class="modal__title">${message}</div>
+                </div>
+            `;
+
+            document.querySelector(".modal").append(div);
+
+            setTimeout(() => {
+                div.remove();
+                prevModal.style.display = "block";
+                hideModal();
+            }, 4000);
+
+        }
+
     });
 
-
 }
+
+fetch("../db.json")
+.then(data => data.json())
+.then(res => console.log(res));
