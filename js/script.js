@@ -169,9 +169,27 @@ class Menu {
     
 }
 
-new Menu("img/tabs/vegy.jpg", "vegy", 'Меню "Фитнес"',  'Меню "Фитнес" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и      здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!', "229", ".menu .container", "menu__item", "last").createMenu();
+// new Menu("img/tabs/vegy.jpg", "vegy", 'Меню "Фитнес"',  'Меню "Фитнес" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и      здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!', "229", ".menu .container", "menu__item", "last").createMenu();
 
-// forms
+
+const getResource = async (url) => {
+    const req = await fetch(url);
+
+    if (!req.ok) {
+        throw new Error("Network response was not OK");
+    }
+
+    return await req.json();
+};
+
+getResource("http://localhost:3000/menu")
+.then((data) => {
+    data.forEach(({img, altimg, title, descr, price}) => {
+        new Menu(img, altimg, title, descr, price, "menu__item", ".menu .container").createMenu();
+    });
+});
+
+//forms
 const forms = document.querySelectorAll('form');
 
 const message = {
@@ -181,44 +199,46 @@ const message = {
 };
 
 forms.forEach((e) => {
-    postData(e);
+    bindPostData(e);
 });
 
-function postData(form) {
+const postData = async (url, data) => {
+    const req = await fetch(url, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: data
+    });
 
-    form.addEventListener("submit", (e) => {
+    return await req.JSON();
+};
+
+function bindPostData(form) {
+    form.addEventListener('submit', (e) => {
         e.preventDefault();
 
-        const div = document.createElement("div");
-        div.classList.add("status");
-        div.textContent = message.loading;
-        form.append(div);
-
+        let statusMessage = document.createElement('img');
+        statusMessage.src = message.loading;
+        statusMessage.style.cssText = `
+            display: block;
+            margin: 0 auto;
+        `;
+        form.insertAdjacentElement('afterend', statusMessage);
+    
         const formData = new FormData(form);
 
-        const obj = {};
+        const json = JSON.stringify(Object.fromEntries(formData.entries()))
 
-        formData.forEach((val, key) => {
-            obj[key] = val;
-        });
-
-        const json = JSON.stringify(obj);
-
-        let xhr = new XMLHttpRequest();
-        xhr.open("POST", "../server.php");
-        xhr.setRequestHeader("Content-Type", "application/json");
-        xhr.send(json);
-
-        xhr.addEventListener("load", (e) => {
-            if (xhr.status === 200 ) {
-                showThanksModal(message.success);
-                div.remove();
-                form.reset();
-            }else {
-                showThanksModal(message.error);
-                div.remove();
-                form.reset();
-            }
+        postData('http://localhost:3000/requests', json)
+        .then(data => {
+            console.log(data);
+            showThanksModal(message.success);
+            statusMessage.remove();
+        }).catch(() => {
+            showThanksModal(message.error);
+        }).finally(() => {
+            form.reset();
         });
 
         function showThanksModal(message) {
@@ -250,6 +270,6 @@ function postData(form) {
 
 }
 
-fetch("../db.json")
-.then(data => data.json())
-.then(res => console.log(res));
+
+
+
