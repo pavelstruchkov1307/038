@@ -169,9 +169,6 @@ class Menu {
     
 }
 
-// new Menu("img/tabs/vegy.jpg", "vegy", 'Меню "Фитнес"',  'Меню "Фитнес" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и      здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!', "229", ".menu .container", "menu__item", "last").createMenu();
-
-
 const getResource = async (url) => {
     const req = await fetch(url);
 
@@ -185,7 +182,7 @@ const getResource = async (url) => {
 getResource("http://localhost:3000/menu")
 .then((data) => {
     data.forEach(({img, altimg, title, descr, price}) => {
-        new Menu(img, altimg, title, descr, price, "menu__item", ".menu .container").createMenu();
+        new Menu(img, altimg, title, descr, price, ".menu__item", [".menu", ".container"]).createMenu();
     });
 });
 
@@ -270,6 +267,147 @@ function bindPostData(form) {
 
 }
 
+//slider
+const offerSlides = document.querySelectorAll(".offer__slide");
+const prevSlideBtn = document.querySelector(".offer__slider-prev");
+const nextSlideBtn = document.querySelector(".offer__slider-next");
+const currentNumber = document.querySelector("#current");
+const totalCounter = document.querySelector("#total");
+const sliderQuantity = offerSlides.length;
+const slidesWrap = document.querySelector(".offer__slider-wrapper");
+const slidesField = document.querySelector(".offer__slider-inner");
+const width = window.getComputedStyle(slidesWrap).width;
+
+let slideIndex = 1;
+let offSet = 0;
+
+slidesField.style.width = 100 * offerSlides.length + '%';
+slidesField.style.display = 'flex';
+
+slidesWrap.style.overflow = 'hidden';
+
+currentNumber.textContent = (slideIndex < 10) ? ('0' + slideIndex) : slideIndex;
+
+offerSlides.forEach(slide => {
+    slide.style.width = width;
+});
+
+nextSlideBtn.addEventListener(('click'), () => {
+
+    if (offSet == parseInt(width) * (offerSlides.length - 1)) {
+        offSet = 0;
+    } else {
+        offSet += parseInt(width);
+    }
+
+    slidesField.style.transform = `translateX(-${offSet}px)`;
+
+    if (slideIndex == sliderQuantity) {
+        slideIndex = 1;
+    } else  {
+        slideIndex += 1;
+    }
+
+    currentNumber.textContent = (slideIndex < 10) ? ('0' + slideIndex) : slideIndex;
+
+});
+
+prevSlideBtn.addEventListener(('click'), () => {
+
+    if (offSet == 0) {
+        offSet = parseInt(width) * (offerSlides.length - 1);
+    } else {
+        offSet -= parseInt(width);
+    }
+
+    slidesField.style.transform = `translateX(-${offSet}px)`;
+
+
+    if (slideIndex == 1) {
+        slideIndex = sliderQuantity;
+    } else  {
+        slideIndex -= 1;
+    }
+
+    currentNumber.textContent = (slideIndex < 10) ? ('0' + slideIndex) : slideIndex;
+
+
+});
 
 
 
+
+// // dots slider
+// const dots = document.querySelector(".dots");
+// let allDots = [];
+
+// // Creates dots and add listeners to them
+// for (let i = 0; i < offerSlides.length; ++i) {
+//     const dot = document.createElement("div");
+//     dot.classList.add("dot");
+//     dots.appendChild(dot);
+//     allDots.push(dot);
+//     dot.addEventListener("click", (e) => {
+//         allDots.forEach((dot, i) => {
+//             if (dot == e.target) {
+//                 changeSlide(i + 1);
+//             }
+//         });
+//     });
+// }
+
+// let slideIndex = 1;
+
+// totalCounter.textContent = (sliderQuantity < 10) ? ('0' + sliderQuantity) : sliderQuantity;
+
+// changeSlide(slideIndex);
+// activateDot(slideIndex);
+
+// prevSlideBtn.addEventListener("click", () => {
+//     changeSlide(slideIndex - 1);
+// });
+
+// nextSlideBtn.addEventListener("click", () => {
+//     changeSlide(slideIndex + 1);
+// });
+
+// function changeSlide(index) {
+
+//     if (index > sliderQuantity) {
+//         index = 1;
+//     }
+
+//     if (index < 1) {
+//         index = sliderQuantity;
+//     }
+
+//     currentNumber.textContent = (index < 10) ? ('0' + index) : index;
+
+//     offerSlides.forEach((slide, i) => {
+
+//         if (i == index - 1) {
+//             slide.classList.add("show");
+//             slide.classList.remove("hide");
+//         } else {
+//             slide.classList.add("show");
+//             slide.classList.add("hide");
+//         }
+        
+//     });
+
+//     activateDot(index);
+
+//     slideIndex = index;
+
+// }
+
+// function activateDot(index) {
+
+//     allDots.forEach((dot, i) => {
+//         if (i == index - 1) {
+//             dot.classList.add("active-dot");
+//         } else {
+//             dot.classList.remove("active-dot");
+//         }
+//     });
+// }
